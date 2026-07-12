@@ -1,0 +1,8 @@
+http_server:
+  port: ":7505"
+  host: "localhost"
+
+db:
+  port: 5432
+  database: "library"
+
