@@ -1,7 +1,8 @@
 package service
 
 import (
-	"github.com/beyond-alok/paperwork/internal/http/response"
+	"net/http"
+
 	"github.com/beyond-alok/paperwork/internal/repository"
 	"github.com/go-playground/validator/v10"
 )
@@ -22,13 +23,14 @@ func NewAuthService(store repository.UserStore) *AuthService {
 	}
 }
 
-func (s *AuthService) Register(req RegisterReq) (string,response.Error) {
+func (s *AuthService) Register(req RegisterReq) (string,error) {
 	validate := validator.New()
 	err := validate.Struct(req)
 	if err != nil {
-		return "",response.Error{
-			Err: err.Error(),
+		return "",Error{
+			Code: http.StatusBadRequest,
 			Msg: "Validation Error",
+			Err: err,
 		}
 	}
 	s.store.FindByEmail(req.Email)

@@ -4,17 +4,11 @@ import (
 	"encoding/json"
 	"log/slog"
 	"net/http"
+
+	"github.com/beyond-alok/paperwork/internal/service"
 )
 
-type Error struct {
-	Err     string `json:"err"`
-	Msg string `json:"msg"`
-}
 
-type Success struct {
-	Data    any `json:"data"`
-	Message string `json:"message"`
-}
 
 func write(w http.ResponseWriter, status int, body any) error {
 	// marshal before writing headers, so we can catch encoding errors
@@ -42,7 +36,7 @@ func writeStream(w http.ResponseWriter, status int, body any) error {
 	return nil
 }
 
-func WriteJson(w http.ResponseWriter, status int, successRes Success) error {
+func WriteJson(w http.ResponseWriter, status int, successRes any) error {
 	err := write(w, status, successRes)
 	if err != nil {
 		slog.Error(" WriteJson: failed to marshal response", "error", err, "body", successRes)
@@ -51,7 +45,7 @@ func WriteJson(w http.ResponseWriter, status int, successRes Success) error {
 	return nil
 }
 
-func WriteJsonStream(w http.ResponseWriter, status int, successRes Success) error {
+func WriteJsonStream(w http.ResponseWriter, status int, successRes service.Success) error {
 	err := writeStream(w, status, successRes)
 	if err != nil {
 		slog.Error(" WriteJsonStream: failed to stream response", "error", err, "body", successRes)
@@ -60,7 +54,7 @@ func WriteJsonStream(w http.ResponseWriter, status int, successRes Success) erro
 	return nil
 }
 
-func WriteError(w http.ResponseWriter, status int, errRes Error) error {
+func WriteError(w http.ResponseWriter, status int, errRes any) error {
 	err := write(w, status, errRes)
 	if err != nil {
 		slog.Error(" WriteError: failed to marshal response", "error", err, "body", errRes)
