@@ -30,27 +30,25 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		if errors.Is(err, io.EOF) {
 			decodeErr := service.Error{
 				Code: http.StatusBadRequest,
-				Msg: "Decode Error",
-				Err: err,
+				Msg:  "Decode Error",
+				Err:  err,
 			}
-			response.WriteError(w,decodeErr.Code,decodeErr )
+			response.WriteError(w, decodeErr.Code, decodeErr)
 		}
 		return
 	}
 
-	msg,err := h.authService.Register(req)
+	_, err = h.authService.Register(req)
 	if err != nil {
 		var svcError service.Error
-		if errors.As(err,&svcError) {
-			slog.Error("registration failed","err",svcError)
-			response.WriteError(w,svcError.Code,svcError)
+		if errors.As(err, &svcError) {
+			slog.Error("registration failed", "err", svcError)
+			response.WriteError(w, svcError.Code, svcError)
 		}
-		slog.Error("unexpected error","error",err)
-		response.WriteError(w,http.StatusInternalServerError,"internal server error")
+		slog.Error("unexpected error", "error", err)
+		response.WriteError(w, http.StatusInternalServerError, "internal server error")
 	}
 }
-	
-
 
 func (store *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("login page"))

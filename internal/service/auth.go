@@ -23,15 +23,16 @@ func NewAuthService(store repository.UserStore) *AuthService {
 	}
 }
 
-func (s *AuthService) Register(req RegisterReq) (string,error) {
+func (s *AuthService) Register(req RegisterReq) (string, error) {
 	validate := validator.New()
 	err := validate.Struct(req)
 	if err != nil {
-		return "",Error{
+		return "", Error{
 			Code: http.StatusBadRequest,
-			Msg: "Validation Error",
-			Err: err,
+			Msg:  "Validation Error",
+			Err:  err,
 		}
 	}
-	s.store.FindByEmail(req.Email)
+	// s.store.GetByEmail(req.Email)
+	return "", nil
 }

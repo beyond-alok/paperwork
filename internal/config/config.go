@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
+	"github.com/joho/godotenv"
 )
 
 type HttpServerConfig struct {
@@ -14,23 +15,29 @@ type HttpServerConfig struct {
 }
 
 type DBConfig struct {
-	Port uint16 `yaml:"port" env:"DB_PORT"`
-	User string `yaml:"user" env:"DB_USER"`
+	Port     uint16 `yaml:"port" env:"DB_PORT"`
+	User     string `yaml:"user" env:"DB_USER"`
 	Password string `yaml:"password" env:"DB_PASSWORD"`
 	Database string `yaml:"database" env:"DATABASE"`
-} 
+}
 type Config struct {
 	HttpServerConfig `yaml:"http_server" env:"HTTP_SERVER"`
-	DBConfig `yaml:"db" env:"DBCONFIG"`
+	DBConfig         `yaml:"db" env:"DBCONFIG"`
 }
 
 func MustLoad() *Config {
 	var configPath string
 
+	// loads env from .env
+	err := godotenv.Load()
+	if err != nil {
+		slog.Warn("no .env file found")
+	}
+
 	configPath = os.Getenv("CONFIG_PATH")
 
 	if configPath == "" {
-		configFlag := flag.String("config","","path to config file")
+		configFlag := flag.String("config", "", "path to config file")
 		flag.Parse()
 
 		configPath = *configFlag
@@ -41,10 +48,10 @@ func MustLoad() *Config {
 		}
 	}
 
-	_,err := os.Lstat(configPath)
+	_, err = os.Lstat(configPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			slog.Error("config must load: configPath does not exist","error",err)
+			slog.Error("config must load: configPath does not exist", "error", err)
 			os.Exit(1)
 		}
 	}
@@ -53,9 +60,9 @@ func MustLoad() *Config {
 
 	err = cleanenv.ReadConfig(configPath, &config)
 	if err != nil {
-		slog.Error("config must load: failed to read config", "error",err)
+		slog.Error("config must load: failed to read config", "error", err)
 		os.Exit(1)
 	}
 	return &config
-	
+
 }
