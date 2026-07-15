@@ -93,7 +93,7 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name: "session_toke",
+		Name: "session_token",
 		Value: signedToken,
 		HttpOnly: true,
 		Secure: true,
@@ -107,5 +107,15 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (store *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("logout"))
+	http.SetCookie(w,&http.Cookie{
+		Name: "session_token",
+		Value: "",
+		HttpOnly: true,
+		Secure: true,
+		SameSite: http.SameSiteLaxMode,
+		Path: "/",
+		MaxAge: -1,
+	})
+
+	response.WriteJson(w,http.StatusOK,"logout successfully")
 }
