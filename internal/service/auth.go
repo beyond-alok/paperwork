@@ -19,7 +19,7 @@ type AuthService struct {
 	store repository.UserStore
 }
 
-type RegisterReq struct {
+type UserRegisterReq struct {
 	Name     string `json:"name" validate:"max=50"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6,max=50,containsany=@!#$%&,containsany=0987654321"`
@@ -41,7 +41,7 @@ func NewAuthService(store repository.UserStore) *AuthService {
 	}
 }
 
-func (s *AuthService) Register(req *RegisterReq) (string, error) {
+func (s *AuthService) Register(req *UserRegisterReq) (string, error) {
 	validate := validator.New()
 	err := validate.Struct(req)
 	if err != nil {

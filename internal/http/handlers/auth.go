@@ -22,7 +22,7 @@ func NewAuthHandler(service *service.AuthService) *AuthHandler {
 }
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
-	var req service.RegisterReq
+	var req service.UserRegisterReq
 
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
